@@ -22,7 +22,7 @@ export class TruckCommand {
   ) {}
 
   @Command({
-    command: 'trucks:update',
+    command: 'trucks:update2',
     describe: 'Update trucks',
   })
   async update() {

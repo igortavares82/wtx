@@ -4,12 +4,14 @@ import { FindOneOptions, Repository } from 'typeorm';
 import { TruckScore } from '../truck-score/truck-score.entity';
 import { TruckScoreByIdDto } from './dtos/get-truck-score.dto';
 import { Truck } from 'src/truck/truck.entity';
+import { FactorCalculator } from 'src/factor/factor.calculator';
 
 @Injectable()
 export class TruckScoreService {
   constructor(
     @InjectRepository(TruckScore)
     private truckScoreRepository: Repository<TruckScore>,
+    private factorCalculator: FactorCalculator
   ) {}
 
   findOne(
@@ -44,6 +46,21 @@ export class TruckScoreService {
           ? 0.5
           : 0),
     };
+  }
+
+  async save2(truck: Truck, avgPrice: number) {
+
+    let truck_id = truck.id
+    let truckScore = await this.truckScoreRepository.findOne({ where: { truck_id }});
+
+    if (!truckScore) throw new NotFoundException('Truck score not found');
+
+    let score = this.factorCalculator.calculate(truck, [avgPrice]);
+    await this.truckScoreRepository.update(truckScore, { score });
+
+    return await this.truckScoreRepository.findOneBy({
+      truck_id: truckScore.truck_id,
+    });
   }
 
   async save({ truck_id, score }) {

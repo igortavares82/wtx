@@ -2,13 +2,9 @@ import { Truck } from '../truck/truck.entity'
 
 export class Factor {
     
-    protected truck: Truck
+    constructor() { }
 
-    constructor(truck: Truck) {
-        this.truck = truck
-    }
-
-    async getScore(args: any[]): Promise<number> {
+    getScore(truck: Truck, args: any[]): number {
         return 0
     }
 }
